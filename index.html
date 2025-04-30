@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sapiyo - Carbon Footprint Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            transition: all 0.3s ease;
+        }
+        
+        .earth-tone-bg {
+            background: linear-gradient(135deg, #e6f5e6 0%, #c2e0f5 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(46, 91, 77, 0.1);
+        }
+        
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        
+        .tree-animation {
+            animation: grow 0.5s ease-in-out;
+        }
+        
+        @keyframes grow {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="earth-tone-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <!-- Header -->
+        <header class="text-center mb-8 slide-in">
+            <div class="flex justify-center items-center mb-4">
+                <i class="fas fa-leaf text-4xl text-green-600 mr-3"></i>
+                <h1 class="text-3xl font-bold logo-text">Sapiyo</h1>
+            </div>
+            <p class="text-gray-600">Calculate your carbon footprint and discover how many trees you need to plant to offset it</p>
+        </header>
+        
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl p-6 mb-8 card-shadow">
+            <!-- Form Section -->
+            <div id="form-section">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-calculator text-green-500 mr-2"></i> Your Lifestyle Details
+                </h2>
+                
+                <form id="carbon-form" class="space-y-6">
+                    <!-- Transportation -->
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">🚗 Daily Transportation</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Car distance (km/day)</label>
+                                <input type="number" id="car-distance" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-200 focus:border-green-500" placeholder="0" min="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Public transport (km/day)</label>
+                                <input type="number" id="public-transport" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-200 focus:border-green-500" placeholder="0" min="0">
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm text-gray-600 mb-1">Flights (km/year)</label>
+                            <input type="number" id="flight-distance" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-200 focus:border-green-500" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <!-- Energy -->
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">💡 Energy Consumption</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Electricity (kWh/month)</label>
+                                <input type="number" id="electricity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-200 focus:border-green-500" placeholder="0" min="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Natural Gas (m³/month)</label>
+                                <input type="number" id="natural-gas" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-200 focus:border-green-500" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Diet -->
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">🍽️ Diet Type</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <button type="button" class="diet-btn px-4 py-2 border rounded-lg text-sm" data-value="vegan">Vegan</button>
+                            <button type="button" class="diet-btn px-4 py-2 border rounded-lg text-sm" data-value="vegetarian">Vegetarian</button>
+                            <button type="button" class="diet-btn px-4 py-2 border rounded-lg text-sm" data-value="non-vegetarian">Non-Vegetarian</button>
+                        </div>
+                        <input type="hidden" id="diet-type" value="">
+                    </div>
+                    
+                    <!-- Shopping -->
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">🛍️ Shopping Habits</label>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Fashion items per month</label>
+                                <input type="range" id="fashion" min="0" max="10" value="0" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-500">
+                                    <span>0</span>
+                                    <span>5</span>
+                                    <span>10+</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Electronics per year</label>
+                                <input type="range" id="electronics" min="0" max="5" value="0" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-500">
+                                    <span>0</span>
+                                    <span>2-3</span>
+                                    <span>5+</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-leaf mr-2"></i> Calculate My Footprint
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Results Section (Initially Hidden) -->
+            <div id="results-section" class="hidden slide-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-chart-line text-green-500 mr-2"></i> Your Carbon Footprint
+                    </h2>
+                    <button id="edit-btn" class="text-sm text-green-600 hover:text-green-800 flex items-center">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                </div>
+                
+                <div class="bg-green-50 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-gray-700">Annual CO₂ Emissions</span>
+                        <span id="total-co2" class="text-2xl font-bold text-green-700">0 kg</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="co2-progress" class="progress-bar bg-green-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">Compared to average (10,000 kg/year)</div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-xl p-4 mb-6">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-tree text-green-600 text-2xl mr-3"></i>
+                        <div>
+                            <div class="font-medium text-gray-700">Trees Needed to Offset</div>
+                            <div id="trees-needed" class="text-2xl font-bold text-blue-700">0 trees</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center my-4" id="tree-visualization">
+                        <!-- Trees will be added here dynamically -->
+                    </div>
+                    
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle text-blue-400 mr-1"></i> 
+                        Each mature tree absorbs ~21 kg of CO₂ annually
+                    </div>
+                </div>
+                
+                <!-- Tips Section -->
+                <div class="bg-yellow-50 rounded-xl p-4 mb-6">
+                    <h3 class="font-medium text-gray-700 mb-3 flex items-center">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Ways to Reduce Your Footprint
+                    </h3>
+                    <div id="tips-list" class="space-y-2 text-sm">
+                        <!-- Tips will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Share Button -->
+                <div class="flex justify-center">
+                    <button id="share-btn" class="bg-green-100 hover:bg-green-200 text-green-700 font-medium py-2 px-6 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-share-alt mr-2"></i> Share My Results
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daily Tip -->
+        <div class="bg-white rounded-2xl p-6 card-shadow slide-in">
+            <div class="flex items-start">
+                <i class="fas fa-seedling text-green-500 text-2xl mr-3 mt-1"></i>
+                <div>
+                    <h3 class="font-medium text-gray-700 mb-1">Daily Eco Tip</h3>
+                    <p id="daily-tip" class="text-gray-600">Washing clothes in cold water can save up to 90% of the energy used for laundry.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Daily tips rotation
+            const tips = [
+                "Using LED bulbs can reduce your lighting energy use by 75%.",
+                "A plant-based diet can reduce food-related emissions by up to 50%.",
+                "Air drying clothes instead of using a dryer can save 2,400 kg of CO₂ annually.",
+                "Unplugging electronics when not in use can save up to 10% on your electricity bill.",
+                "Taking the stairs instead of the elevator saves energy and improves your health.",
+                "A reusable water bottle can save 167 plastic bottles per year from landfills."
+            ];
+            
+            // Set random daily tip
+            document.getElementById('daily-tip').textContent = tips[Math.floor(Math.random() * tips.length)];
+            
+            // Diet type selection
+            const dietButtons = document.querySelectorAll('.diet-btn');
+            dietButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    dietButtons.forEach(btn => {
+                        btn.classList.remove('bg-green-100', 'border-green-400', 'text-green-700');
+                        btn.classList.add('border-gray-300');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+                    this.classList.remove('border-gray-300');
+                    
+                    // Set hidden input value
+                    document.getElementById('diet-type').value = this.dataset.value;
+                });
+            });
+            
+            // Form submission
+            const form = document.getElementById('carbon-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateFootprint();
+            });
+            
+            // Edit button
+            document.getElementById('edit-btn').addEventListener('click', function() {
+                document.getElementById('form-section').classList.remove('hidden');
+                document.getElementById('results-section').classList.add('hidden');
+                window.scrollTo(0, 0);
+            });
+            
+            // Share button
+            document.getElementById('share-btn').addEventListener('click', function() {
+                const totalCO2 = document.getElementById('total-co2').textContent;
+                const treesNeeded = document.getElementById('trees-needed').textContent;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My Carbon Footprint Results from Sapiyo',
+                        text: `According to Sapiyo, I emit ${totalCO2} of CO₂ annually. ${treesNeeded} needed to offset it. Let's go green!`,
+                        url: window.location.href
+                    }).catch(err => {
+                        console.log('Error sharing:', err);
+                        fallbackShare();
+                    });
+                } else {
+                    fallbackShare();
+                }
+            });
+            
+            function fallbackShare() {
+                const totalCO2 = document.getElementById('total-co2').textContent;
+                const treesNeeded = document.getElementById('trees-needed').textContent;
+                const shareText = `According to Sapiyo, I emit ${totalCO2} of CO₂ annually. ${treesNeeded} needed to offset it. Let's go green! ${window.location.href}`;
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Results copied to clipboard!');
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                    prompt('Copy this:', shareText);
+                });
+            }
+            
+            function calculateFootprint() {
+                // Get form values
+                const carDistance = parseFloat(document.getElementById('car-distance').value) || 0;
+                const publicTransport = parseFloat(document.getElementById('public-transport').value) || 0;
+                const flightDistance = parseFloat(document.getElementById('flight-distance').value) || 0;
+                const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+                const naturalGas = parseFloat(document.getElementById('natural-gas').value) || 0;
+                const dietType = document.getElementById('diet-type').value;
+                const fashion = parseInt(document.getElementById('fashion').value) || 0;
+                const electronics = parseInt(document.getElementById('electronics').value) || 0;
+                
+                // Calculate emissions (simplified calculations)
+                // Transportation
+                const carEmissions = carDistance * 365 * 0.2; // 0.2 kg CO2 per km
+                const publicTransportEmissions = publicTransport * 365 * 0.05; // 0.05 kg CO2 per km
+                const flightEmissions = flightDistance * 0.15; // 0.15 kg CO2 per km
+                
+                // Energy
+                const electricityEmissions = electricity * 12 * 0.5; // 0.5 kg CO2 per kWh
+                const gasEmissions = naturalGas * 12 * 2; // 2 kg CO2 per m³
+                
+                // Diet (average kg CO2 per year)
+                let dietEmissions = 0;
+                if (dietType === 'vegan') dietEmissions = 1000;
+                else if (dietType === 'vegetarian') dietEmissions = 1500;
+                else if (dietType === 'non-vegetarian') dietEmissions = 2500;
+                
+                // Shopping
+                const fashionEmissions = fashion * 12 * 20; // 20 kg per item
+                const electronicsEmissions = electronics * 200; // 200 kg per device
+                
+                // Total emissions in kg
+                const totalEmissions = carEmissions + publicTransportEmissions + flightEmissions + 
+                                      electricityEmissions + gasEmissions + dietEmissions + 
+                                      fashionEmissions + electronicsEmissions;
+                
+                // Convert to tonnes
+                const totalEmissionsTonnes = totalEmissions / 1000;
+                
+                // Calculate trees needed (21 kg per tree per year)
+                const treesNeeded = Math.ceil(totalEmissions / 21);
+                
+                // Display results
+                document.getElementById('total-co2').textContent = 
+                    totalEmissionsTonnes >= 1 ? 
+                    `${totalEmissionsTonnes.toFixed(1)} tonnes` : 
+                    `${Math.round(totalEmissions)} kg`;
+                
+                document.getElementById('trees-needed').textContent = `${treesNeeded} trees`;
+                
+                // Progress bar (compared to average of 10,000 kg/year)
+                const progressPercentage = Math.min((totalEmissions / 10000) * 100, 100);
+                document.getElementById('co2-progress').style.width = `${progressPercentage}%`;
+                
+                // Tree visualization
+                const treeContainer = document.getElementById('tree-visualization');
+                treeContainer.innerHTML = '';
+                
+                // Show up to 10 trees (for visualization purposes)
+                const treesToShow = Math.min(treesNeeded, 10);
+                for (let i = 0; i < treesToShow; i++) {
+                    const tree = document.createElement('div');
+                    tree.className = 'tree-animation inline-block mx-1';
+                    tree.innerHTML = '<i class="fas fa-tree text-green-600 text-2xl"></i>';
+                    tree.style.animationDelay = `${i * 0.1}s`;
+                    treeContainer.appendChild(tree);
+                }
+                
+                if (treesNeeded > 10) {
+                    const moreText = document.createElement('div');
+                    moreText.className = 'text-sm text-gray-500 mt-2';
+                    moreText.textContent = `+ ${treesNeeded - 10} more trees`;
+                    treeContainer.appendChild(moreText);
+                }
+                
+                // Generate tips based on highest emission sources
+                const tipsContainer = document.getElementById('tips-list');
+                tipsContainer.innerHTML = '';
+                
+                const tips = [];
+                
+                if (carEmissions > 1000) {
+                    tips.push("🚗 Consider carpooling, public transport, or biking to reduce your car emissions.");
+                }
+                
+                if (flightEmissions > 500) {
+                    tips.push("✈️ Reduce air travel when possible, or consider carbon offsets for flights.");
+                }
+                
+                if (electricityEmissions > 1000) {
+                    tips.push("💡 Switch to renewable energy providers or invest in energy-efficient appliances.");
+                }
+                
+                if (dietEmissions > 1500) {
+                    tips.push("🍽️ Reducing meat consumption can significantly lower your dietary carbon footprint.");
+                }
+                
+                if (fashionEmissions > 500) {
+                    tips.push("👕 Buy fewer, higher-quality clothing items and consider second-hand shopping.");
+                }
+                
+                if (electronicsEmissions > 300) {
+                    tips.push("📱 Extend the life of your electronics and recycle them properly when needed.");
+                }
+                
+                // Add general tips if not enough specific ones
+                if (tips.length < 3) {
+                    tips.push("🌱 Plant trees or support reforestation projects to offset your emissions.");
+                    tips.push("♻️ Recycle and compost to reduce waste sent to landfills.");
+                    tips.push("🏠 Improve home insulation to reduce heating and cooling needs.");
+                }
+                
+                // Display tips
+                tips.forEach(tip => {
+                    const tipElement = document.createElement('div');
+                    tipElement.className = 'flex items-start';
+                    tipElement.innerHTML = `
+                        <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+                        <span>${tip}</span>
+                    `;
+                    tipsContainer.appendChild(tipElement);
+                });
+                
+                // Show results section
+                document.getElementById('form-section').classList.add('hidden');
+                document.getElementById('results-section').classList.remove('hidden');
+                
+                // Scroll to results
+                setTimeout(() => {
+                    document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
